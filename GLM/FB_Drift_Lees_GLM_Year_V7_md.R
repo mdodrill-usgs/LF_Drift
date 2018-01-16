@@ -247,12 +247,30 @@ dat.3 = dat.2[which(dat.2$year %in% st.yr),]
 dat.4 = dat.2[which(!dat.2$year %in% st.yr),]
 
 
+dat.3$mo.num = as.numeric(dat.3$month) - 9
+dat.4$mo.num = as.numeric(dat.4$month) - 9
 
-fit.1 = glmmadmb(count.sum ~ 0 + (1|year) + month  + (1|DriftRM) + offset(log(Volume_Sampled_M.3)), 
-                data = dat.3, family = 'nbinom')
 
-fit.2 = glmmadmb(count.sum ~ 0 + (1|year) + month  + (1|DriftRM) + offset(log(Volume_Sampled_M.3)), 
-                data = dat.4, family = 'nbinom')
+dat.2$steady = as.factor(ifelse(dat.2$year %in% st.yr, 1, 0))
+dat.2$mo.num = as.numeric(dat.2$month) - 9
+
+
+
+
+
+fit.1 = glmmadmb(count.sum ~ 0 + (1|year) + steady:mo.num + (1|DriftRM) + offset(log(Volume_Sampled_M.3)), 
+                 data = dat.2, family = 'nbinom')
+
+ranef(fit.1)
+
+
+
+
+# fit.1 = glmmadmb(count.sum ~ 0 + (1|year) + month  + (1|DriftRM) + offset(log(Volume_Sampled_M.3)),
+#                 data = dat.3, family = 'nbinom')
+# 
+# fit.2 = glmmadmb(count.sum ~ 0 + (1|year) + month  + (1|DriftRM) + offset(log(Volume_Sampled_M.3)),
+#                 data = dat.4, family = 'nbinom')
 
 
 tmp.len = length(coef(fit.1))
